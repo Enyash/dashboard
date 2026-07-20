@@ -1,2 +1,6 @@
 .env
 .idea
+ReportDashboard.spec
+build/
+dist/
+reports.json

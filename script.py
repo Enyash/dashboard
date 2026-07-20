@@ -125,6 +125,9 @@ def parse_report_from_ref(ref_str):
 
 
 def parse_csv_reports(filepath):
+    """
+    Функция парсит csv файл и возвращает массив объектов
+    """
     reports = []
 
     try:
@@ -174,8 +177,9 @@ def parse_csv_reports(filepath):
                     "org_name": org_name,
                     "period": period_info
                 })
+        result = sorted(reports, key=lambda x: x['date'], reverse=True)
 
-        return reports
+        return result
 
     except Exception as e:
         print(f"❌ Ошибка парсинга CSV {filepath}: {e}")
@@ -227,6 +231,8 @@ def load_all_reports():
     if organizations:
         for org in organizations:
             print(f"  • {org}: {len(organizations[org])} отчетов")
+
+    # print(f"All reports list: {all_reports_list}")
     return organizations, all_reports_list
 
 
@@ -313,14 +319,14 @@ def build_matrix(organizations, all_reports_list, sort_order="desc"):
     # Группируем отчеты по названию
     report_groups = {}
     for report in all_reports_list:
-        key = report["report_name"]
+        key = f'{report["report_name"]}_{report["org_name"]}'
         if key not in report_groups:
             report_groups[key] = []
         report_groups[key].append(report)
 
     matrix = []
     row_num = 1
-
+    print(f"Report groups: {report_groups}")
     for report_name, reports in report_groups.items():
         # Сортируем по дате (сначала свежие)
         reports_sorted = sorted(reports, key=lambda x: x["date"] if x["date"] else datetime.min, reverse=True)
